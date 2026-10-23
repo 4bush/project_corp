@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS purchase_request (
+CREATE TABLE purchase_request (
   id            uuid PRIMARY KEY,
   business_key  text NOT NULL UNIQUE,
   status        text NOT NULL,
