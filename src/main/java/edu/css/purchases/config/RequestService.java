@@ -4,9 +4,10 @@ import edu.css.purchases.domain.DuplicateRequest;
 import edu.css.purchases.domain.RequestId;
 import edu.css.purchases.domain.RequestStatus;
 import edu.css.purchases.domain.Rule;
-import edu.css.purchases.persistence.RequestJdbc;
+import edu.css.purchases.persistence.RequestJpa;
+import edu.css.purchases.persistence.RequestMapper;
 import java.util.UUID;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RequestService {
 
   private final Rule rules;
-  private final RequestJdbc requests;
+  private final RequestJpa requests;
 
-  public RequestService(Rule rules, RequestJdbc requests) {
+  public RequestService(Rule rules, RequestJpa requests) {
     this.rules = rules;
     this.requests = requests;
   }
@@ -33,8 +34,9 @@ public class RequestService {
       throw new IllegalArgumentException("business key must not be blank");
     }
     try {
-      requests.insert(id.uuid(), businessKey, RequestStatus.DRAFT.name(), title);
-    } catch (DuplicateKeyException ex) { // SQLState 23505 (subclass of DataIntegrityViolationException)
+      requests.insert(RequestMapper.toEntity(id.uuid(), businessKey, RequestStatus.DRAFT, title));
+      requests.flush();
+    } catch (DataIntegrityViolationException ex) {
       throw new DuplicateRequest(businessKey);
     }
   }
@@ -42,11 +44,14 @@ public class RequestService {
   /** One transaction, two INSERTs. The second fails -> rollback -> nothing is saved. */
   @Transactional
   public void insertTwice(String businessKey) {
-    requests.insert(UUID.randomUUID(), businessKey, RequestStatus.DRAFT.name(), "Laptops");
+    requests.insert(RequestMapper.toEntity(
+        UUID.randomUUID(), businessKey, RequestStatus.DRAFT, "Laptops"));
     try {
-      requests.insert(UUID.randomUUID(), businessKey, RequestStatus.DRAFT.name(), "Laptops again");
-    } catch (DuplicateKeyException ex) {
-      throw new DuplicateRequest(businessKey); // unchecked -> rollback
+      requests.insert(RequestMapper.toEntity(
+          UUID.randomUUID(), businessKey, RequestStatus.DRAFT, "Laptops again"));
+      requests.flush();
+    } catch (DataIntegrityViolationException ex) {
+      throw new DuplicateRequest(businessKey);
     }
   }
 }

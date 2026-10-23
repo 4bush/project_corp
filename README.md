@@ -31,11 +31,18 @@ Statuses: `DRAFT`, `APPROVED`, `ORDERED`.
         \            \          /           injects Rule
          \            \        /
                      domain                   persistence
-        RequestId  RequestStatus  RequestPolicy   RequestJdbc (JdbcTemplate)
+      RequestId  RequestStatus  RequestPolicy   RequestEntity, RequestJpa, RequestMapper
         Rule + TransitionRule + UnapprovedCannotOrder (+ ChainRule)
         DuplicateRequest, SupplierOrderPort, OrderPlacement
-                     (no Spring, no JDBC)
+                    (no Spring, no JDBC, no JPA)
 ```
+
+The persistence package contains `RequestEntity`, `RequestJpa`, and `RequestMapper`.
+The database schema is created by `db/migration/V1__create_purchase_request.sql`.
+
+## Schema
+Flyway applies schema migrations, then Hibernate validates the mapped schema. Schema changes are
+added as new V2, V3, and later migration files; V1 is never edited.
 
 ## Run
 ```bash
@@ -43,4 +50,3 @@ docker compose up -d        # only PostgreSQL (css/css on localhost:5432)
 mvn -q verify               # tests against PostgreSQL
 mvn spring-boot:run         # starts the app
 ```
-`src/main/resources/db/schema.sql` is the hand-written schema; the tests drop and re-apply it.
