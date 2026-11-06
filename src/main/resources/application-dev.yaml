@@ -3,7 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/css
     username: css
     password: css
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:db/schema.sql
+app:
+  downstream:
+    base-url: http://localhost:9090
+    timeout: 2s

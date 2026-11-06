@@ -44,6 +44,9 @@ mvn -q verify               # tests against PostgreSQL
 mvn spring-boot:run         # starts the app
 ```
 `src/main/resources/db/schema.sql` is the hand-written schema; the tests drop and re-apply it.
+The application uses `JdbcTemplate` and this SQL schema directly; it does not use JPA or
+`ddl-auto`. The default `dev` profile uses the local `css` database. The `prod` profile
+requires `CSS_DB_URL`, `CSS_DB_USER`, and `CSS_DB_PASSWORD` environment variables.
 
 ## HTTP API
 The service exposes `POST /api/v1/purchase-requests` with a JSON body containing
