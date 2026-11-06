@@ -1,7 +1,9 @@
 package edu.css.purchases.config;
 
 import edu.css.purchases.domain.DuplicateRequest;
+import edu.css.purchases.domain.PurchaseRequest;
 import edu.css.purchases.domain.RequestId;
+import edu.css.purchases.domain.RequestNotFoundException;
 import edu.css.purchases.domain.RequestStatus;
 import edu.css.purchases.domain.Rule;
 import edu.css.purchases.persistence.RequestJdbc;
@@ -37,6 +39,11 @@ public class RequestService {
     } catch (DuplicateKeyException ex) { // SQLState 23505 (subclass of DataIntegrityViolationException)
       throw new DuplicateRequest(businessKey);
     }
+  }
+
+  public PurchaseRequest findById(RequestId id) {
+    return requests.findById(id.uuid())
+        .orElseThrow(() -> new RequestNotFoundException(id.value()));
   }
 
   /** One transaction, two INSERTs. The second fails -> rollback -> nothing is saved. */

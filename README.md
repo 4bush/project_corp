@@ -44,3 +44,12 @@ mvn -q verify               # tests against PostgreSQL
 mvn spring-boot:run         # starts the app
 ```
 `src/main/resources/db/schema.sql` is the hand-written schema; the tests drop and re-apply it.
+
+## HTTP API
+The service exposes `POST /api/v1/purchase-requests` with a JSON body containing
+`businessKey` and `title`. A successful request returns `201 Created` with its generated
+UUID, `DRAFT` status, business key, and title. Retrieve it with
+`GET /api/v1/purchase-requests/{id}`. Invalid input returns `400`, an unknown UUID returns
+`404`, and a duplicate business key returns `409`.
+
+OpenAPI UI: `/swagger-ui/index.html`; health check: `/actuator/health`.

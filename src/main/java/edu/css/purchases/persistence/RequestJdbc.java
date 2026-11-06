@@ -1,6 +1,8 @@
 package edu.css.purchases.persistence;
 
 import edu.css.purchases.domain.RequestStatus;
+import edu.css.purchases.domain.PurchaseRequest;
+import edu.css.purchases.domain.RequestId;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +38,23 @@ public class RequestJdbc {
             "SELECT status FROM purchase_request WHERE business_key = ?",
             (rs, row) -> RequestStatus.valueOf(rs.getString("status")),
             businessKey)
+        .stream()
+        .findFirst();
+  }
+
+  public Optional<PurchaseRequest> findById(UUID id) {
+    return jdbc.query(
+            """
+                SELECT id, business_key, status, title
+                FROM purchase_request
+                WHERE id = ?
+                """,
+            (rs, row) -> new PurchaseRequest(
+                new RequestId(rs.getString("id")),
+                rs.getString("business_key"),
+                RequestStatus.valueOf(rs.getString("status")),
+                rs.getString("title")),
+            id)
         .stream()
         .findFirst();
   }
