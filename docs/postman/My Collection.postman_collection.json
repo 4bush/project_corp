@@ -1,0 +1,46 @@
+{
+  "info": {
+    "_postman_id": "7c8c4139-6193-4d90-ac44-9a5c0c01d861",
+    "name": "My Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52895187",
+    "_collection_link": "https://go.postman.co/collection/52895187-7c8c4139-6193-4d90-ac44-9a5c0c01d861?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "http://localhost:8080/api/v1/purchase-requests",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-Id",
+            "value": "abc-123"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"businessKey\":\"PR-7\",\"title\":\"\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/actuator/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "actuator",
+            "health"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
